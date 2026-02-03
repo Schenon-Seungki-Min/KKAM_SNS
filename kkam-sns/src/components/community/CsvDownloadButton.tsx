@@ -7,21 +7,45 @@ interface Props {
   keyword: string;
 }
 
+function formatNumber(n?: number): string {
+  if (n === undefined || isNaN(n)) return '';
+  return n.toString();
+}
+
 export default function CsvDownloadButton({ results, keyword }: Props) {
   const handleDownload = () => {
     if (results.length === 0) return;
 
     // BOM for Korean Excel compatibility
     const BOM = '\uFEFF';
-    const header = '소스,제목,링크,날짜,설명';
+    const header = '채널명,채널 임팩트 지수,View,Like,제목,내용 (요약),유형,주요 키워드,링크';
+    const escape = (s: string) => `"${s.replace(/"/g, '""')}"`;
+
     const rows = results.map((r) => {
-      const escape = (s: string) => `"${s.replace(/"/g, '""')}"`;
+      // 채널명
+      const channelName = r.source === 'youtube' && r.channelTitle
+        ? `유튜브 - ${r.channelTitle}`
+        : r.sourceLabel;
+
+      // 채널 임팩트 지수
+      let impact = '';
+      if (r.source === 'youtube') {
+        const parts: string[] = [];
+        if (r.subscriberCount !== undefined) parts.push(`구독자 ${r.subscriberCount.toLocaleString()}`);
+        if (r.commentCount !== undefined) parts.push(`댓글 ${r.commentCount.toLocaleString()}`);
+        impact = parts.join(', ');
+      }
+
       return [
-        escape(r.sourceLabel),
+        escape(channelName),
+        escape(impact),
+        formatNumber(r.viewCount),
+        formatNumber(r.likeCount),
         escape(r.title),
-        escape(r.link),
-        escape(r.date),
         escape(r.description),
+        '', // 유형: 사람이 판단
+        '', // 주요 키워드: 사람이 판단
+        escape(r.link),
       ].join(',');
     });
 

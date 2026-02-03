@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { CommunitySearchItem, KeywordFrequency } from '@/types';
-import CommunitySearchBar from '@/components/community/CommunitySearchBar';
+import CommunitySearchBar, { YouTubeAdvancedFilters } from '@/components/community/CommunitySearchBar';
 import CommunityResultList from '@/components/community/CommunityResultList';
 import WordCloud from '@/components/community/WordCloud';
 import CsvDownloadButton from '@/components/community/CsvDownloadButton';
@@ -29,11 +29,21 @@ export default function CommunityPage() {
 
   const [sourceFilter, setSourceFilter] = useState<string>('all');
 
-  const handleSearch = useCallback(async (keyword: string) => {
+  const handleSearch = useCallback(async (keyword: string, filters?: YouTubeAdvancedFilters) => {
     setState((prev) => ({ ...prev, loading: true, error: null, keyword }));
 
     try {
-      const res = await fetch(`/api/community?keyword=${encodeURIComponent(keyword)}&display=10`);
+      const params = new URLSearchParams({
+        keyword,
+        display: '50',
+      });
+
+      if (filters?.publishedAfter) params.set('publishedAfter', filters.publishedAfter);
+      if (filters?.publishedBefore) params.set('publishedBefore', filters.publishedBefore);
+      if (filters?.viewMin) params.set('viewMin', filters.viewMin);
+      if (filters?.viewMax) params.set('viewMax', filters.viewMax);
+
+      const res = await fetch(`/api/community?${params}`);
       const data = await res.json();
 
       if (!data.success) {
