@@ -4,7 +4,7 @@
  * 네이버 블로그/카페/지식iN + 유튜브 통합 검색
  */
 
-import { CommunitySearchItem, KeywordFrequency } from '@/types';
+import { CommunitySearchItem, KeywordFrequency, YouTubeSearchFilters } from '@/types';
 import { searchNaverAll } from './naver-search';
 import { searchYouTube } from './youtube-search';
 
@@ -13,11 +13,12 @@ import { searchYouTube } from './youtube-search';
  */
 export async function searchCommunity(
   keyword: string,
-  display: number = 10
+  display: number = 50,
+  youtubeFilters?: YouTubeSearchFilters
 ): Promise<{ results: CommunitySearchItem[]; relatedKeywords: KeywordFrequency[] }> {
   const [naverResults, youtubeResults] = await Promise.allSettled([
     searchNaverAll(keyword, display),
-    searchYouTube(keyword, display),
+    searchYouTube(keyword, display, youtubeFilters),
   ]);
 
   const results: CommunitySearchItem[] = [];

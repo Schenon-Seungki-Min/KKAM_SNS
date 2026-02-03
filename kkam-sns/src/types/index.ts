@@ -79,6 +79,12 @@ export interface CommunitySearchItem {
   date: string; // YYYY-MM-DD or display string
   source: 'naver_blog' | 'naver_cafe' | 'naver_kin' | 'youtube';
   sourceLabel: string;
+  // YouTube-only statistics
+  viewCount?: number;
+  likeCount?: number;
+  commentCount?: number;
+  channelTitle?: string;
+  subscriberCount?: number;
 }
 
 // 커뮤니티 검색 응답
@@ -96,4 +102,33 @@ export interface CommunitySearchResponse {
 export interface KeywordFrequency {
   text: string;
   value: number;
+}
+
+// ===== YouTube 댓글 분석 =====
+
+export interface CommentData {
+  text: string;
+  likeCount: number;
+  authorName: string;
+  publishedAt: string;
+}
+
+export interface CommentAnalysisResult {
+  videoId: string;
+  videoTitle: string;
+  topComments: CommentData[];
+  keywordFrequencies: KeywordFrequency[];
+  stats: {
+    totalCount: number;
+    avgLikes: number;
+    maxLikes: number;
+  };
+}
+
+// YouTube 고급 검색 필터
+export interface YouTubeSearchFilters {
+  publishedAfter?: string;
+  publishedBefore?: string;
+  viewMin?: number;
+  viewMax?: number;
 }
