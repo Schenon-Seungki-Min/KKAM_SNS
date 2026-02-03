@@ -26,10 +26,10 @@ export default function CommunitySearchBar({ onSearch, loading }: Props) {
 
     const apiFilters: YouTubeAdvancedFilters = {};
     if (filters.publishedAfter) {
-      apiFilters.publishedAfter = new Date(filters.publishedAfter).toISOString();
+      apiFilters.publishedAfter = new Date(filters.publishedAfter).toISOString().replace(/\.\d{3}Z$/, 'Z');
     }
     if (filters.publishedBefore) {
-      apiFilters.publishedBefore = new Date(filters.publishedBefore + 'T23:59:59').toISOString();
+      apiFilters.publishedBefore = new Date(filters.publishedBefore + 'T23:59:59').toISOString().replace(/\.\d{3}Z$/, 'Z');
     }
     if (filters.viewMin) apiFilters.viewMin = filters.viewMin;
     if (filters.viewMax) apiFilters.viewMax = filters.viewMax;
