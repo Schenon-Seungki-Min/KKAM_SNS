@@ -74,10 +74,10 @@ export async function searchYouTube(
     key: YOUTUBE_API_KEY,
   });
 
-  if (filters?.publishedAfter) {
+  if (filters?.publishedAfter && filters.publishedAfter.length > 0) {
     params.set('publishedAfter', filters.publishedAfter);
   }
-  if (filters?.publishedBefore) {
+  if (filters?.publishedBefore && filters.publishedBefore.length > 0) {
     params.set('publishedBefore', filters.publishedBefore);
   }
 
@@ -87,7 +87,9 @@ export async function searchYouTube(
     const response = await fetch(url);
 
     if (!response.ok) {
-      console.error('YouTube Search API error:', await response.text());
+      const errorText = await response.text();
+      const debugUrl = url.replace(YOUTUBE_API_KEY, '***');
+      console.error('YouTube Search API error:', errorText, 'URL:', debugUrl);
       return getMockYouTubeSearch(keyword);
     }
 
