@@ -64,12 +64,15 @@ export async function searchYouTube(
     return getMockYouTubeSearch(keyword);
   }
 
+  // 조회수 필터가 있으면 인기순, 없으면 최신순
+  const order = (filters?.viewMin !== undefined) ? 'viewCount' : 'date';
+
   const params = new URLSearchParams({
     part: 'snippet',
     q: keyword,
     type: 'video',
     maxResults: String(Math.min(maxResults, 50)),
-    order: 'date',
+    order: order,
     relevanceLanguage: 'ko',
     key: YOUTUBE_API_KEY,
   });
