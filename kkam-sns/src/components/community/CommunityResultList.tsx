@@ -15,8 +15,8 @@ const SOURCE_COLORS: Record<string, string> = {
   youtube: 'bg-red-100 text-red-700',
 };
 
-function formatNumber(n?: number): string {
-  if (n === undefined) return '-';
+function formatNumber(n?: number | null): string {
+  if (n == null) return '-';
   if (n >= 10000) return `${(n / 10000).toFixed(1)}만`;
   if (n >= 1000) return `${(n / 1000).toFixed(1)}천`;
   return n.toLocaleString();
