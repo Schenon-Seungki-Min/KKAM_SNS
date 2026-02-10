@@ -55,14 +55,15 @@ function formatPostDate(dateStr?: string): string {
 export async function searchNaver(
   keyword: string,
   type: NaverSearchType,
-  display: number = 10
+  display: number = 10,
+  sort: 'sim' | 'date' = 'sim'
 ): Promise<CommunitySearchItem[]> {
   if (!NAVER_CLIENT_ID || !NAVER_CLIENT_SECRET) {
     console.warn(`Naver API keys not set - returning mock data for ${type}`);
     return getMockNaverSearch(keyword, type);
   }
 
-  const url = `https://openapi.naver.com/v1/search/${type}?query=${encodeURIComponent(keyword)}&display=${display}&sort=date`;
+  const url = `https://openapi.naver.com/v1/search/${type}?query=${encodeURIComponent(keyword)}&display=${display}&sort=${sort}`;
 
   try {
     const response = await fetch(url, {
@@ -99,12 +100,13 @@ export async function searchNaver(
  */
 export async function searchNaverAll(
   keyword: string,
-  display: number = 10
+  display: number = 10,
+  sort: 'sim' | 'date' = 'sim'
 ): Promise<CommunitySearchItem[]> {
   const types: NaverSearchType[] = ['blog', 'cafearticle', 'kin'];
 
   const results = await Promise.allSettled(
-    types.map((type) => searchNaver(keyword, type, display))
+    types.map((type) => searchNaver(keyword, type, display, sort))
   );
 
   const items: CommunitySearchItem[] = [];
