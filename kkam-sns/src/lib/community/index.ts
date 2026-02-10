@@ -1,7 +1,7 @@
 /**
  * 커뮤니티 분석 메인 모듈 (Type A: 키워드 탐색형)
  *
- * 네이버 블로그/카페/지식iN + 유튜브 통합 검색
+ * 네이버 블로그/카페/지식iN + 유튜브 플랫폼별 검색
  */
 
 import { CommunitySearchItem, KeywordFrequency, YouTubeSearchFilters } from '@/types';
@@ -9,7 +9,39 @@ import { searchNaverAll } from './naver-search';
 import { searchYouTube } from './youtube-search';
 
 /**
- * 모든 소스에서 키워드 검색
+ * 네이버 검색 (블로그, 카페, 지식iN)
+ */
+export async function searchNaverCommunity(
+  keyword: string,
+  display: number = 50,
+  sort: 'sim' | 'date' = 'sim'
+): Promise<{ results: CommunitySearchItem[]; relatedKeywords: KeywordFrequency[] }> {
+  const results = await searchNaverAll(keyword, display, sort);
+
+  // 연관 키워드 추출
+  const relatedKeywords = extractKeywords(results, keyword);
+
+  return { results, relatedKeywords };
+}
+
+/**
+ * 유튜브 검색
+ */
+export async function searchYouTubeCommunity(
+  keyword: string,
+  display: number = 50,
+  filters?: YouTubeSearchFilters
+): Promise<{ results: CommunitySearchItem[]; relatedKeywords: KeywordFrequency[] }> {
+  const results = await searchYouTube(keyword, display, filters);
+
+  // 연관 키워드 추출
+  const relatedKeywords = extractKeywords(results, keyword);
+
+  return { results, relatedKeywords };
+}
+
+/**
+ * 모든 소스에서 키워드 검색 (기존 호환용)
  */
 export async function searchCommunity(
   keyword: string,
